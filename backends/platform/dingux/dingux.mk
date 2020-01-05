@@ -37,7 +37,7 @@ endif
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.png $(bundle_name)/
 
 # Special target for generationg GCW-Zero OPK bundle
-$(gcw0_bundle): all
+$(gcw0_bundle): all GeneralUser\ GS\ FluidSynth\ v1.44.sf2
 	$(MKDIR) $(gcw0_bundle)
 	$(CP) $(DIST_FILES_DOCS) $(gcw0_bundle)/
 	$(MKDIR) $(gcw0_bundle)/themes
@@ -68,8 +68,7 @@ endif
 	echo >> $(gcw0_bundle)/README.man.txt
 	cat $(srcdir)/README.md | sed -e 's/\[/⟦/g' -e 's/\]/⟧/g' -e '/^1\.1)/,$$ s/^[0-9][0-9]*\.[0-9][0-9]*.*/\[&\]/' >> $(gcw0_bundle)/README.man.txt
 
-
-#	$(CP) GeneralUser\ GS\ FluidSynth\ v1.44.sf2 $(gcw0_bundle)/
+	$(CP) GeneralUser\ GS\ FluidSynth\ v1.44.sf2 $(gcw0_bundle)/
 
 gcw0-opk-unstripped: $(gcw0_bundle)
 	$(CP) $(PLUGINS) $(gcw0_bundle)/plugins/
