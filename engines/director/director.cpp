@@ -61,6 +61,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Setup mixer
 	syncSoundSettings();
 
+	// Load Palettes
+	loadPalettes();
+
 	// Load Patterns
 	loadPatterns();
 
@@ -145,6 +148,8 @@ Common::Error DirectorEngine::run() {
 		_lingo->runTests();
 
 		return Common::kNoError;
+	} else if (getGameID() == GID_TESTALL) {
+		enqueueAllMovies();
 	}
 
 	// FIXME
@@ -171,19 +176,28 @@ Common::Error DirectorEngine::run() {
 	loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
-	loadInitialMovie(getEXEName());
+
+	if (getGameID() == GID_TESTALL)  {
+		_nextMovie = getNextMovieFromQueue();
+		loadInitialMovie(_nextMovie.movie);
+	} else {
+		loadInitialMovie(getEXEName());
+	}
 
 	_currentScore->setArchive(_mainArchive);
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	bool loop = true;
 
 	while (loop) {
 		loop = false;
 
-		_currentScore->loadArchive();
+		if (_currentScore) {
+			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+			_currentScore->loadArchive();
+		}
 
 		// If we came in a loop, then skip as requested
 		if (!_nextMovie.frameS.empty()) {
@@ -196,17 +210,24 @@ Common::Error DirectorEngine::run() {
 			_nextMovie.frameI = -1;
 		}
 
-		debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+		if (!debugChannelSet(-1, kDebugLingoCompileOnly) && _currentScore) {
+			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
-		_currentScore->startLoop();
+			_currentScore->startLoop();
 
-		debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+			debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+		}
+
+		if (getGameID() == GID_TESTALL) {
+			_nextMovie = getNextMovieFromQueue();
+		}
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
 			_lingo->restartLingo();
 
 			delete _currentScore;
+			_currentScore = nullptr;
 
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
@@ -216,6 +237,11 @@ Common::Error DirectorEngine::run() {
 
 			if (!mov) {
 				warning("nextMovie: No score is loaded");
+
+				if (getGameID() == GID_TESTALL) {
+					loop = true;
+					continue;
+				}
 
 				return Common::kNoError;
 			}
@@ -271,6 +297,36 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	}
 
 	return nameMap;
+}
+
+void DirectorEngine::enqueueAllMovies() {
+	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSList files;
+	dir.getChildren(files, Common::FSNode::kListFilesOnly);
+
+	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
+		_movieQueue.push_back((*file).getName());
+
+	Common::sort(_movieQueue.begin(), _movieQueue.end());
+
+	debug(1, "=========> Enqueued %d movies", _movieQueue.size());
+}
+
+MovieReference DirectorEngine::getNextMovieFromQueue() {
+	MovieReference res;
+
+	if (_movieQueue.empty())
+		return res;
+
+	res.movie = _movieQueue.front();
+
+	debug(0, "=======================================");
+	debug(0, "=========> Next movie is %s", res.movie.c_str());
+	debug(0, "=======================================");
+
+	_movieQueue.remove_at(0);
+
+	return res;
 }
 
 } // End of namespace Director

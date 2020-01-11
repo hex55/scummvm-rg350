@@ -147,6 +147,7 @@ static const char *const selectorNameTable[] = {
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"posn",         // SCI2 benchmarking script
+	"printLang",    // GK2
 	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
 	"test",         // Torin
@@ -260,6 +261,7 @@ enum ScriptPatcherSelectors {
 	,
 	SELECTOR_newWith,
 	SELECTOR_posn,
+	SELECTOR_printLang,
 	SELECTOR_view,
 	SELECTOR_fade,
 	SELECTOR_test,
@@ -3673,6 +3675,66 @@ static const uint16 gk2WagnerPaintingMessagePatch[] = {
 	PATCH_END
 };
 
+// The game-over rooms 665 and 666 draw a pic over everything by setting the
+//  default plane's priority to 202, but this is already inventoryBorderPlane's
+//  priority. In our interpreter this causes a border fragment to be drawn above
+//  the pics. This worked by luck in Sierra's interpreter because it sorts on
+//  memory ID when planes have the same priority. In ScummVM the renderer
+//  guarantees a sort order based on the creation order of the planes. The
+//  default plane is created first and drawn before inventoryBorderPlane.
+//
+// We fix this by increasing the plane priority in the game-over rooms.
+//
+// Applies to: All versions
+// Responsible methods: gabeNews:init, uDie:init
+// Fixes bug: #11298
+static const uint16 gk2GameOverPrioritySignature[] = {
+	0x39, SIG_SELECTOR8(priority),  // pushi priority
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x00ca),       // pushi 00ca
+	0x81, 0x03,                     // lag 03
+	0x4a, SIG_UINT16(0x0012),       // send 12 [ Plane ... priority: 202 ]
+	SIG_END
+};
+
+static const uint16 gk2GameOverPriorityPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x00cb),     // pushi 00cb [ priority: 203 ]
+	PATCH_END
+};
+
+// GK2 fans have created patches that add subtitles to the entire game. There
+//  are at least English and Spanish patch sets. Sierra added the subtitle
+//  feature solely for the Portuguese version. The fan patches include these
+//  subtitle scripts, replace the Portuguese resources and embedded script
+//  strings, and configure Sierra's interpreter to use the Portuguese language
+//  through RESOURCE.CFG. This sets GK2:printLang which the scripts test for
+//  Portuguese in order to activate subtitles.
+//
+// The subtitle patches are compatible with ScummVM except for the requirement
+//  that GK2:printLang equals Portuguese (351) since we don't use RESOURCE.CFG.
+//  We fix this by patching the GK2:printLang tests to always activate subtitles
+//  when a sync resource is present for synchronizing text to video playback.
+//
+// Applies to: PC versions with a subtitle fan-patch applied
+// Responsible methods: Any that test GK2:printLang for Portuguese
+// Fixes bugs: #9677, #11282
+static const uint16 gk2SubtitleCompatibilitySignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(printLang), // pushi printLang
+	0x76,                           // push0
+	0x81, 0x01,                     // lag 01
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ GK2 printLang? ]
+	SIG_END
+};
+
+static const uint16 gk2SubtitleCompatibilityPatch[] = {
+	0x34, PATCH_UINT16(0x015f),     // ldi 015f [ K_LANG_PORTUGUESE ]
+	0x33, 0x03,                     // jmp 03
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,           gk2VolumeResetPatch },
@@ -3682,6 +3744,8 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
+	{  true,   665, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
+	{  true,   666, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
 	{  true,   800, "fix neuschwanstein hint (1/3)",                       1, gk2NeuschwansteinHintSignature1,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (2/3)",                       1, gk2NeuschwansteinHintSignature2,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (3/3)",                       1, gk2NeuschwansteinHintSignature3,   gk2NeuschwansteinHintPatch },
@@ -3695,6 +3759,13 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,            sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,            sci2ChangeDirPatch },
+	{ false,     0, "subtitle patch compatibility",                        3, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    11, "subtitle patch compatibility",                        7, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    12, "subtitle patch compatibility",                        5, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    91, "subtitle patch compatibility",                        7, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,   200, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,  1300, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false, 64924, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -17013,12 +17084,57 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	PATCH_END
 };
 
+// The Russian version of SQ1VGA has mangled class names in its scripts. This
+//  isn't a problem in Sierra's interpreter since this is just metadata, but our
+//  feature detection code looks up several classes by name and requires them to
+//  exist. We fix this by patching the Motion, Rm, and Sound strings back to
+//  their original values.
+//
+// Applies to: Russian PC Floppy
+// Fixes bug: #10156
+static const uint16 sq1vgaSignatureRussianMotionName[] = {
+	SIG_MAGICDWORD,
+	0x2A, 0x4D, 0x6F, 0x74, 0x69,       // *Motion.
+	0x6F, 0x6E, 0x20,
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianMotionName[] = {
+	0x4D, 0x6F, 0x74, 0x69, 0x6F,       // Motion
+	0x6E, 0x00,
+	PATCH_END
+};
+static const uint16 sq1vgaSignatureRussianRmName[] = {
+	SIG_MAGICDWORD,
+	0x2a, 0x52, 0x6d, 0x00,             // *Rm
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianRmName[] = {
+	0x52, 0x6d, 0x00,                   // Rm
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureRussianSoundName[] = {
+	SIG_MAGICDWORD,
+	0x87, 0xa2, 0xe3, 0xaa, 0x00, 0x00, // ....
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianSoundName[] = {
+	0x53, 0x6f, 0x75, 0x63, 0x64,       // Sound
+	PATCH_END
+};
+
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
+	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
+	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
+	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -18529,6 +18645,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 			case GID_FREDDYPHARKAS:
 				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 844))) {
 					enablePatch(signatureTable, "Mac: skip broken hop singh scene");
+				}
+				break;
+			case GID_GK2:
+				// Enable subtitle compatibility if a sync resource is present
+				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeSync, 10))) {
+					enablePatch(signatureTable, "subtitle patch compatibility");
 				}
 				break;
 			case GID_KQ5:

@@ -41,7 +41,6 @@ TheEntity entities[] = {
 	{ kTheCast,				"cast",				true,  2 },	// D2
 	{ kTheCastMembers,		"castmembers",		false, 3 },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
-	{ kTheChars,			"chars",			false, 3 },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 2 },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false, 2 },	// D2 p
 	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 				D4 function
@@ -64,7 +63,6 @@ TheEntity entities[] = {
 	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false, 2 },	// D2 p
-	{ kTheItems,			"items",			false, 3 },	//		 D3
 	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//				D4 p
 	{ kTheKey,				"key",				false, 2 },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false, 2 },	// D2 f
@@ -76,12 +74,10 @@ TheEntity entities[] = {
 	{ kTheLastFrame,		"lastFrame",		false, 4 },	//				D4 p
 	{ kTheLastKey,			"lastKey",			false, 2 },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false, 2 },	// D2 f
-	{ kTheLines,			"lines",			false, 3 },	//		 D3
 	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
-	{ kTheMaxInteger,		"maxInteger",		false, 4 },	//				D4 f
+	{ kTheMaxInteger,		"maxInteger",		false, 3 },	//		D3.1 f
 	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
 	{ kTheMenu,				"menu",				true,  3 },	//		 D3 p
-	{ kTheMenus,			"menus",			false, 3 },	//		 D3 p
 	{ kTheMenuItem,			"menuitem",			true,  3 },	//		 D3 p
 	{ kTheMenuItems,		"menuitems",		false, 3 },	//		 D3 f
 	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
@@ -100,20 +96,21 @@ TheEntity entities[] = {
 	{ kTheMovieFileSize,	"movieFileSize",	false, 4 },	//				D4 f
 	{ kTheMovieName,		"movieName",		false, 4 },	//				D4 f
 	{ kTheMoviePath,		"moviePath",		false, 4 },	//				D4 f
-	{ kTheMultiSound,		"multiSound",		false, 4 },	//				D4 p
+	{ kTheMultiSound,		"multiSound",		false, 3 },	//		D3.1 f
 	{ kTheOptionDown,		"optionDown",		false, 2 },	// D2 f
 	{ kTheParamCount,		"paramCount",		false, 4 },	//				D4 f
 	{ kThePathName,			"pathName",			false, 2 },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
+	{ kThePi,				"pi",				false, 4 },	//				D4 f
 	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//				D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//				D4 p
-	{ kTheQuickTimePresent,	"quickTimePresent",	false, 4 },	//				D4 f
+	{ kTheQuickTimePresent,	"quickTimePresent",	false, 3 },	//		D3.1 f
 	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//				D4 p
 	{ kTheResult,			"result",			false, 2 },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//						D5 f
 	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//						D5 f
-	{ kTheRomanLingo,		"romanLingo",		false, 4 },	//				D4 p
+	{ kTheRomanLingo,		"romanLingo",		false, 3 },	//		D3.1 p
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 4 },	//				D4 f
 	{ kTheSelection,		"selection",		false, 2 },	// D2 f
@@ -147,7 +144,6 @@ TheEntity entities[] = {
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
 	{ kTheWindow,			"window",			true,  4 },	//				D4
 	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
-	{ kTheWords,			"words",			false, 3 },	//		 D3
 	{ kTheNOEntity, NULL, false, 0 }
 };
 
@@ -168,21 +164,16 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"locH",			kTheLocH,		2 },// D2 p
 	{ kTheSprite,	"locV",			kTheLocV,		2 },// D2 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,4 },//			D4 p
-	{ kTheSprite,	"movieRate",	kTheMovieRate,	4 },//				D4 P
-	{ kTheSprite,	"movieTime",	kTheMovieTime,	4 },//				D4 P
 	{ kTheSprite,	"pattern",		kThePattern,	2 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		2 },// D2 p
 	{ kTheSprite,	"right",		kTheRight,		2 },// D2 p
 	{ kTheSprite,	"scoreColor",	kTheScoreColor,	4 },//				D4 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum,	4 },//				D4 p
-	{ kTheSprite,	"startTime",	kTheStartTime,	4 },//				D4 p
 	{ kTheSprite,	"stretch",		kTheStrech,		2 },// D2 p
-	{ kTheSprite,	"stopTime",		kTheStopTime,	4 },//				D4 p
 	{ kTheSprite,	"top",			kTheTop,		2 },// D2 p
-	{ kTheSprite,	"trails",		kTheTrails,		4 },//				D4 p
+	{ kTheSprite,	"trails",		kTheTrails,		3 },//		D3.1 p
 	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
 	{ kTheSprite,	"visible",		kTheVisible,	4 },//				D4 p
-	{ kTheSprite,	"volume",		kTheVolume,		4 },//				D4 p
 	{ kTheSprite,	"width",		kTheWidth,		2 },// D2 p
 
 	// Common cast fields
@@ -204,16 +195,21 @@ TheEntityField fields[] = {
 
 	// Digital video fields
 	{ kTheCast,		"center",		kTheCenter,		4 },//				D4 p
-	{ kTheCast,		"controller",	kTheController,	4 },//				D4 p
+	{ kTheCast,		"controller",	kTheController,	3 },//			D3.1 p
 	{ kTheCast,		"crop",			kTheCrop,		4 },//				D4 p
-	{ kTheCast,		"directToStage",kTheDirectToStage,4 },//			D4 p
-	{ kTheCast,		"duration",		kTheDuration,	4 },//				D4 p
+	{ kTheCast,		"directToStage",kTheDirectToStage,3 },//		D3.1 p
+	{ kTheCast,		"duration",		kTheDuration,	3 },//			D3.1 p
 	{ kTheCast,		"frameRate",	kTheFrameRate,	4 },//				D4 p
-	{ kTheCast,		"loop",			kTheLoop,		4 },//				D4 p
+	{ kTheCast,		"loop",			kTheLoop,		3 },//			D3.1 p
+	{ kTheSprite,	"movieRate",	kTheMovieRate,	3 },//			D3.1 P
+	{ kTheSprite,	"movieTime",	kTheMovieTime,	3 },//			D3.1 P
 	{ kTheCast,		"pausedAtStart",kThePausedAtStart,4 },//			D4 p
-	{ kTheCast,		"preLoad",		kThePreLoad,	4 },//				D4 p
-	{ kTheCast,		"sound",		kTheSound,		4 },//				D4 p // 0-1 off-on
+	{ kTheCast,		"preLoad",		kThePreLoad,	3 },//			D3.1 p
+	{ kTheCast,		"sound",		kTheSound,		3 },//			D3.1 p // 0-1 off-on
+	{ kTheSprite,	"startTime",	kTheStartTime,	3 },//			D3.1 p
+	{ kTheSprite,	"stopTime",		kTheStopTime,	3 },//			D3.1 p
 	{ kTheCast,		"video",		kTheVideo,		4 },//				D4 p
+	{ kTheSprite,	"volume",		kTheVolume,		3 },//		D3.1 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		4 },//				D4 p
@@ -251,16 +247,6 @@ TheEntityField fields[] = {
 	{ kTheMenu,		"name",			kTheName,		3 },//		D3 p
 
 	{ kTheCastMembers,	"number",	kTheNumber,		3 },// 		D3 p
-	{ kTheChars,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheChars,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheItems,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheItems,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheLines,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheLines,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheMenuItems,"number",		kTheNumber,		3 },//		D3 p
-	{ kTheMenus,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheWords,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheWords,	"last",			kTheLast,		4 },//				D4 f
 
 	{ kTheDate,		"short",		kTheShort,		3 },//		D3 f
 	{ kTheDate,		"long",			kTheLong,		3 },//		D3 f
@@ -538,6 +524,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
 		break;
+	case kThePi:
+		d.type = FLOAT;
+		d.u.f = M_PI;
+		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field %d of entity %d", field, entity);
 		d.type = VOID;
@@ -685,8 +675,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		}
 
 		return d;
-	} else {
-		warning("Lingo::getTheCast(): The cast %d found", id);
 	}
 
 	castType = _vm->getCurrentScore()->_loadedCast->getVal(id)->_type;

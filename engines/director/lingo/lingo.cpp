@@ -301,8 +301,12 @@ int Datum::toInt() {
 	switch (type) {
 	case REFERENCE:
 		toString();
+		// fallthrough
 	case STRING:
 		u.i = atoi(u.s->c_str());
+		break;
+	case VOID:
+		u.i = 0;
 		break;
 	case INT:
 		// no-op
@@ -323,8 +327,12 @@ double Datum::toFloat() {
 	switch (type) {
 	case REFERENCE:
 		toString();
+		// fallthrough
 	case STRING:
 		u.f = atof(u.s->c_str());
+		break;
+	case VOID:
+		u.f = 0.0;
 		break;
 	case INT:
 		u.f = (double)u.i;
@@ -516,13 +524,13 @@ void Lingo::printAllVars() {
 	for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
 	}
-	debug("");
+	debugN("\n");
 
 	debugN("  Global vars: ");
 	for (SymbolHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
 	}
-	debug("");
+	debugN("\n");
 }
 
 } // End of namespace Director

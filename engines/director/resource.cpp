@@ -63,8 +63,13 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 
 	_mainArchive = createArchive();
 
-	if (!_mainArchive->openFile(movie))
-		error("Could not open '%s'", movie.c_str());
+	if (!_mainArchive->openFile(movie)) {
+		delete _mainArchive;
+		_mainArchive = nullptr;
+
+		warning("openMainArchive(): Could not open '%s'", movie.c_str());
+		return nullptr;
+	}
 
 	return _mainArchive;
 }
@@ -256,14 +261,21 @@ void DirectorEngine::clearSharedCast() {
 
 	delete _sharedScore;
 
+	_sharedScore = nullptr;
+
 	delete _sharedDIB;
 	delete _sharedSTXT;
 	delete _sharedSound;
 	delete _sharedBMP;
+
+	_sharedDIB = nullptr;
+	_sharedSTXT = nullptr;
+	_sharedSound = nullptr;
+	_sharedBMP = nullptr;
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	if (_sharedScore) {
+	if (_sharedScore && _sharedScore->_movieArchive) {
 		if (_sharedScore->_movieArchive->getFileName().equalsIgnoreCase(filename))
 			return;
 	}
@@ -271,10 +283,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	clearSharedCast();
 
 	Archive *shardcst = createArchive();
-
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
@@ -284,10 +292,14 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
 
-		_sharedScore = new Score(this);
+		delete shardcst;
 
 		return;
 	}
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedScore = new Score(this);
 	_sharedScore->setArchive(shardcst);

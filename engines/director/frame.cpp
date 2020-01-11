@@ -197,8 +197,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			sprite._foreColor = 0xff - (uint8)stream->readByte();
-			sprite._backColor = 0xff - (uint8)stream->readByte();
+			if (_vm->getVersion() >= 4) {
+				sprite._foreColor = 0xff - (uint8)stream->readByte();
+				sprite._backColor = 0xff - (uint8)stream->readByte();
+			} else {
+				sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 -> 0, 127 -> 256
+				sprite._backColor = (127 - stream->readByte()) & 0xff;
+			}
 
 			sprite._flags = stream->readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
@@ -208,7 +213,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			else
 				sprite._trails = 0;
 
-			sprite._lineSize = (sprite._flags >> 8) & 0x03;
+			sprite._lineSize = ((sprite._flags >> 8) & 0x07);
 
 			sprite._castId = stream->readUint16();
 			sprite._startPoint.y = stream->readUint16();
@@ -605,7 +610,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				}
 			} else {
 				if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-					if (!_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
+					if (!_vm->getSharedScore() || !_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
 						debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {
@@ -664,7 +669,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte spriteType = sp->_spriteType;
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
-	int lineSize = sp->_lineSize - 1;
+	int lineSize = sp->_lineSize;
 	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
 		switch (sp->_cast->_type) {
 		case kCastShape:
@@ -688,7 +693,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 				}
 				foreColor = sc->_fgCol;
 				backColor = sc->_bgCol;
-				lineSize = sc->_lineThickness - 1;
+				lineSize = sc->_lineThickness;
 				ink = sc->_ink;
 				// shapes should be rendered with transparency by default
 				if (ink == kInkTypeCopy) {
@@ -702,6 +707,9 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		}
 	}
 
+	// for outlined shapes, line thickness of 1 means invisible.
+	lineSize -= 1;
+
 	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
 		sp->_startPoint.y,
 		sp->_startPoint.x + sp->_width,
@@ -711,42 +719,55 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
 	tmpSurface.clear(255);
 
-	// No minus one on the pattern here! MacPlotData will do that for us!
-	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
-	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), lineSize, backColor);
-	Common::Rect fillRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
 
+	// Draw fill
+	Common::Rect fillRect((int)shapeRect.width(), (int)shapeRect.height());
+	Graphics::MacPlotData plotFill(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
 	switch (spriteType) {
 	case kRectangleSprite:
-		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
 		break;
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, foreColor, true, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(fillRect, 12, foreColor, true, Graphics::macDrawPixel, &plotFill);
 		break;
 	case kOvalSprite:
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, true, Graphics::macDrawPixel, &pd);
-		break;
-	case kLineTopBottomSprite:
-		Graphics::drawLine(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, Graphics::macDrawPixel, &pd);
-		break;
-	case kLineBottomTopSprite:
-		Graphics::drawLine(fillRect.left, fillRect.bottom, fillRect.right, fillRect.top, foreColor, Graphics::macDrawPixel, &pd);
-		break;
-	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
-		//Graphics::drawRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
-		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
-		break;
-	case kOutlinedRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, foreColor, false, Graphics::macDrawPixel, &pd);
-		break;
-	case kOutlinedOvalSprite:
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, false, Graphics::macDrawPixel, &pd);
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, true, Graphics::macDrawPixel, &plotFill);
 		break;
 	case kCastMemberSprite: 		// Face kit D3
-		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
 		break;
 	default:
-		warning("Frame::renderShape(): Unhandled sprite type: %d", sp->_spriteType);
+		break;
+	}
+
+	// Draw stroke
+	Common::Rect strokeRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
+	Graphics::MacPlotData plotStroke(&tmpSurface, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
+	switch (spriteType) {
+	case kLineTopBottomSprite:
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, Graphics::macDrawPixel, &plotStroke);
+		break;
+	case kLineBottomTopSprite:
+		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, foreColor, Graphics::macDrawPixel, &plotStroke);
+		break;
+	case kRectangleSprite:
+		// fall through
+	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+		Graphics::drawRect(strokeRect, foreColor, Graphics::macDrawPixel, &plotStroke);
+		//tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
+		break;
+	case kRoundedRectangleSprite:
+		// fall through
+	case kOutlinedRoundedRectangleSprite:
+		Graphics::drawRoundRect(strokeRect, 12, foreColor, false, Graphics::macDrawPixel, &plotStroke);
+		break;
+	case kOvalSprite:
+		// fall through
+	case kOutlinedOvalSprite:
+		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, false, Graphics::macDrawPixel, &plotStroke);
+		break;
+	default:
+		break;
 	}
 
 	addDrawRect(spriteId, shapeRect);
@@ -766,9 +787,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	int height = button->_initialRect.height();
 	int width = button->_initialRect.width() + 3;
 
-	Common::Rect textRect(0, 0, width, height);
-	// pass the rect of the button into the label.
-	renderText(surface, spriteId, &textRect);
+	bool invert = spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId;
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
@@ -784,8 +803,9 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
-			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
+
+			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
 		}
 		break;
@@ -796,9 +816,13 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		warning("renderButton: Unknown buttonType");
 		break;
 	}
+
+	Common::Rect textRect(0, 0, width, height);
+	// pass the rect of the button into the label.
+	renderText(surface, spriteId, &textRect);
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
 	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
@@ -807,10 +831,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	int width;
 
 	if (_vm->getVersion() >= 4) {
-		if (textSize == NULL)
+		if (textRect == NULL)
 			width = textCast->_initialRect.right;
 		else {
-			width = textSize->width();
+			width = textRect->width();
 		}
 	} else {
 		width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
@@ -829,11 +853,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->_fontId, textCast->_fontSize, textCast->_textSlant);
 
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s' text: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), Common::toPrintable(textCast->_ftext).c_str());
+	debugC(3, kDebugText, "renderText: sprite: %d x: %d y: %d w: %d h: %d font: '%s' text: '%s'", spriteId, x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), Common::toPrintable(textCast->_ftext).c_str());
 
 	uint16 boxShadow = (uint16)textCast->_boxShadow;
 	uint16 borderSize = (uint16)textCast->_borderSize;
-	if (textSize != NULL)
+	if (textRect != NULL)
 		borderSize = 0;
 	uint16 padding = (uint16)textCast->_gutterSize;
 	uint16 textShadow = (uint16)textCast->_textShadow;
@@ -848,14 +872,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 
 	height = textSurface->h;
-	if (textSize != NULL) {
+	if (textRect != NULL) {
 		// TODO: this offset could be due to incorrect fonts loaded!
-		textSize->bottom = height + textCast->_cachedMacText->getLineCount();
+		textRect->bottom = height + textCast->_cachedMacText->getLineCount();
 	}
 
 	uint16 textX = 0, textY = 0;
 
-	if (textSize == NULL) {
+	if (textRect == NULL) {
 		if (borderSize > 0) {
 			if (_vm->getVersion() <= 3)
 				height++;
@@ -901,11 +925,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
 	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
 
-	if (textSize == NULL && boxShadow > 0) {
+	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
 	}
 
-	if (textSize == NULL && borderSize != kSizeNone) {
+	if (textRect == NULL && borderSize != kSizeNone) {
 		for (int bb = 0; bb < borderSize; bb++) {
 			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
 			textWithFeatures.fillRect(borderRect, 0xff);
@@ -918,7 +942,12 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
 
-	inkBasedBlit(surface, textWithFeatures, _sprites[spriteId]->_ink, Common::Rect(x, y, x + width, y + height));
+	InkType ink = _sprites[spriteId]->_ink;
+
+	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+		ink = kInkTypeReverse;
+
+	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height));
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect) {

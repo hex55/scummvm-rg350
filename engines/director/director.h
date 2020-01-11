@@ -25,6 +25,7 @@
 
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/str-array.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
@@ -47,7 +48,8 @@ namespace Director {
 
 enum DirectorGameID {
 	GID_GENERIC,
-	GID_TEST
+	GID_TEST,
+	GID_TESTALL
 };
 
 class Archive;
@@ -80,7 +82,11 @@ struct MovieReference {
 	MovieReference() { frameI = -1; }
 };
 
-extern byte defaultPalette[768];
+struct PaletteV4 {
+	int id;
+	byte *palette;
+	int length;
+};
 
 class DirectorEngine : public ::Engine {
 public:
@@ -101,8 +107,10 @@ public:
 	Score *getCurrentScore() const { return _currentScore; }
 	Score *getSharedScore() const { return _sharedScore; }
 	Common::String getCurrentPath() const { return _currentPath; }
+	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
+	void loadPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
@@ -172,15 +180,22 @@ private:
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
+	Common::HashMap<int, PaletteV4 *> _director4Palettes;
+
 	Common::String _sharedCastFile;
 
 	bool _draggingSprite;
 	uint16 _draggingSpriteId;
 	Common::Point _draggingSpritePos;
 
+	Common::StringArray _movieQueue;
+
 private:
 	void testFontScaling();
 	void testFonts();
+
+	void enqueueAllMovies();
+	MovieReference getNextMovieFromQueue();
 };
 
 extern DirectorEngine *g_director;

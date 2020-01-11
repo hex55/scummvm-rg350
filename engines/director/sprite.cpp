@@ -129,7 +129,7 @@ uint16 Sprite::getPattern() {
 			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
 			break;
 		}
-
+		// fallthrough
 	default:
 		return 0;
 	}
@@ -146,6 +146,7 @@ void Sprite::setPattern(uint16 pattern) {
 	case kOutlinedRoundedRectangleSprite:
 	case kOutlinedOvalSprite:
 		_castId = pattern;
+		break;
 
 	case kCastMemberSprite:
 		// TODO

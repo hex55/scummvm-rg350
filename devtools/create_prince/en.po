@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-04 01:01+0000\n"
+"PO-Revision-Date: 2020-01-09 15:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8465,23 +8465,23 @@ msgstr "$6: That's dirty!"
 
 #: dialog0263.txt:208
 msgid "$7: Została wyrządzona nam straszna krzywda!"
-msgstr ""
+msgstr "$7: Terrible harm was done to us!"
 
 #: dialog0263.txt:309
 msgid "$8: Żądamy surowego ukarania winnych!"
-msgstr ""
+msgstr "$8: We demand severe punishment for the guilty!"
 
 #: dialog0263.txt:310
 msgid "$9: Chcę odzyskać swoje ciało!"
-msgstr ""
+msgstr "$9: I want to recover my body!"
 
 #: dialog0263.txt:311
 msgid "$10: I trzeba coś z tym fantem zrobić!"
-msgstr ""
+msgstr "$10: And you have to do something about it!"
 
 #: dialog0263.txt:312
 msgid "$11: Chcemy zemsty!"
-msgstr ""
+msgstr "$11: We want revenge!"
 
 #: dialog0263.txt:413
 msgid "$12: Halo?!"
@@ -8489,11 +8489,11 @@ msgstr "$12: Hello?!"
 
 #: dialog0263.txt:414
 msgid "$13: Ktoś nas w ogóle słucha?!"
-msgstr ""
+msgstr "$13: Is anyone listening to us at all?!"
 
 #: dialog0263.txt:415
 msgid "$14: Do licha ciężkiego, co za ignorancja!"
-msgstr ""
+msgstr "$14: What's the hell, such a disregard!"
 
 #: dialog0263.txt:416
 msgid "$15: Słyszysz nas, Lucyferze?!"
@@ -8578,86 +8578,93 @@ msgstr "OTHER: Tell it all again..."
 #: dialog0265.txt:1
 msgid "OTHER: W miarę trwania opowieści Lucyfer był coraz|mniej śpiący, lecz za to coraz bardziej|zdumiony."
 msgstr ""
+"OTHER: As the story progressed, Lucifer was less|and less dormant, but more "
+"and more|astonished."
 
 #: dialog0266.txt:1
 msgid "HERO: To właśnie on!"
-msgstr ""
+msgstr "HERO: It's him!"
 
 #: dialog0267.txt:1
 msgid "OTHER: To właśnie on!"
-msgstr ""
+msgstr "OTHER: It's him!"
 
 #: dialog0268.txt:1
 msgid "HERO: Ten sam demon był przyczyną naszych|nieszczęść?"
-msgstr ""
+msgstr "HERO: The same demon was the cause of our|misfortunes?"
 
 #: dialog0268.txt:2
 msgid "OTHER: Poznaję go!"
-msgstr ""
+msgstr "OTHER: I recognized him!"
 
 #: dialog0268.txt:3
 msgid "OTHER: A my mamy więcej wspólnego niż myślałam..."
-msgstr ""
+msgstr "OTHER: And we have more in common than I thought..."
 
 #: dialog0269.txt:1
 msgid "OTHER: Tak, mój panie?"
-msgstr ""
+msgstr "OTHER: Yes my lord?"
 
 #: dialog0270.txt:1
 msgid "OTHER: Rozpoczął się iście piekielny ogień pytań."
-msgstr ""
+msgstr "OTHER: And the truly hellish flow of questions began."
 
 #: dialog0271.txt:1
 msgid "OTHER: Jesteś najbardziej nikczemnym, zuchwałym|i zepsutym diabłem w ostatnich latach."
-msgstr ""
+msgstr "OTHER: You are the most wicked, bold and corrupt devil in recent years."
 
 #: dialog0271.txt:2
 msgid "OTHER: Przebijasz nawet Belzebuba."
-msgstr ""
+msgstr "OTHER: You even beat Beelzebub."
 
 #: dialog0271.txt:3
 msgid "OTHER2: Wszystko dla twojej chwały,|mój panie."
-msgstr ""
+msgstr "OTHER2: Everything for your glory,|my lord."
 
 #: dialog0271.txt:4
 msgid "OTHER2: Mówiłem, że moje nowoczesne metody|przyniosą rezultat i dotrzymuję|słowa."
 msgstr ""
+"OTHER2: I said that my modern methods will bring results|and I keep my word."
 
 #: dialog0271.txt:5
 msgid "OTHER2: Zasady są po to, by je łamać!"
-msgstr ""
+msgstr "OTHER2: The rules are there to break!"
 
 #: dialog0271.txt:6
 msgid "OTHER2: Postęp musi skruszyć zmurszałe|i przestarzałe prawo!"
-msgstr ""
+msgstr "OTHER2: Progress must break the old and|outdated law!"
 
 #: dialog0271.txt:7
 msgid "OTHER: I za to należy ci się nagroda, a tym dwóm|idiotom jakaś specjalna kara, może małe|przypalanko, może..."
 msgstr ""
+"OTHER: And for that, you deserve a reward, and for|these two idiots some "
+"special punishment,|maybe a small burn, maybe..."
 
 #: dialog0272.txt:1
 msgid "P#OTHER: Z drugiej jednak strony..."
-msgstr ""
+msgstr "P#OTHER: On the other hand, however..."
 
 #: dialog0272.txt:2
 msgid "P#OTHER: ...nie można tolerować narobionych|przez ciebie kłopotów."
-msgstr ""
+msgstr "P#OTHER: ...you can't ignore the trouble you|have caused."
 
 #: dialog0272.txt:3
 msgid "OTHER: I tego, że do Piekła dostali się|zwykli śmiertelnicy, a ten na górze|znowu mnie upokarza."
 msgstr ""
+"OTHER: And the fact that ordinary mortals|got to Hell, and the dude from the "
+"top|humiliates me again."
 
 #: dialog0272.txt:4
 msgid "OTHER: Jeśli nie odkręcisz tego w 5 sekund,|ja odkręcę ci łeb."
-msgstr ""
+msgstr "OTHER: If you don't unscrew it in 5 seconds,|I'll unscrew your head."
 
 #: dialog0272.txt:5
 msgid "OTHER: A potem spokojnie porozmawiamy sobie o|ŁAMANIU, KRUSZENIU I WYPALANIU."
-msgstr ""
+msgstr "OTHER: And then we'll calmly talk about|BREAKING, CRUSHING AND BURNING."
 
 #: dialog0272.txt:6
 msgid "OTHER: I to będzie długa rozmowa."
-msgstr ""
+msgstr "OTHER: And it will be a long conversation."
 
 #: dialog0273.txt:1
 msgid "HERO: Ładna dzisiaj pogoda."
@@ -8746,26 +8753,28 @@ msgstr "OTHER: Marosthittem chodj les uji|nioklamcom."
 #: dialog0283.txt:1
 msgid "HERO: Pewnie nic nie rozumiesz z tego, co|mówię, ty tępy osiłku."
 msgstr ""
+"HERO: You apparently don't understand anything|from what I'm saying,|you "
+"blunt musclehead."
 
 #: dialog0284.txt:1
 msgid "HERO: Co za zadziwiający świat, mają tu takie|tresowane małpy jak ty."
-msgstr ""
+msgstr "HERO: What an amazing world, having such trained|monkeys as you here."
 
 #: dialog0285.txt:1
 msgid "HERO: Ha, ha! Mogę do ciebie gadać co chcę,|a ty i tak mi nic nie zrobisz."
-msgstr ""
+msgstr "HERO: Haha! I can tell you what I want|and you won't do anything to me."
 
 #: dialog0286.txt:1
 msgid "HERO: Arivaldzie! Już czas! Już czas!|Zabierz mnie stąd!"
-msgstr ""
+msgstr "HERO: Arivald! It's time! It's time!|Take me out of here!"
 
 #: dialog0287.txt:1
 msgid "HERO: A kim do licha jest Sheila?..."
-msgstr ""
+msgstr "HERO: Who the hell is Sheila?..."
 
 #: dialog0288.txt:1
 msgid "HERO: Ślepa to mało powiedziane..."
-msgstr ""
+msgstr "HERO: Blind is an understatement..."
 
 #: dialog0289.txt:1
 msgid "OTHER: Nareszcie chwila rozrywki!"
@@ -8773,67 +8782,67 @@ msgstr "OTHER: Finally a minute break!"
 
 #: dialog0290.txt:1
 msgid "OTHER: Czas się odegrać!"
-msgstr ""
+msgstr "OTHER: Time to play back!"
 
 #: dialog0291.txt:1
 msgid "OTHER: Łapy aż zatrzeszczą!"
-msgstr ""
+msgstr "OTHER: My paws are crackling up!"
 
 #: dialog0292.txt:1
 msgid "OTHER: Rączki do góry!"
-msgstr ""
+msgstr "OTHER: Hands up!"
 
 #: dialog0293.txt:1
 msgid "OTHER: Nadchodzi godzina zapłaty!"
-msgstr ""
+msgstr "OTHER: The hour of payback is coming!"
 
 #: dialog0294.txt:1
 msgid "OTHER: To oznacza wojnę!"
-msgstr ""
+msgstr "OTHER: It means war!"
 
 #: dialog0295.txt:1
 msgid "OTHER: Się robi, książę!"
-msgstr ""
+msgstr "OTHER: Consider it done, prince!"
 
 #: dialog0296.txt:1
 msgid "OTHER: O nie, książę, jak tak dalej pójdzie,|to zbankrutuję."
-msgstr ""
+msgstr "OTHER: Oh no, prince, if this continues,|I will go bankrupt."
 
 #: dialog0296.txt:2
 msgid "OTHER: Myślę, że starczy na dzisiaj."
-msgstr ""
+msgstr "OTHER: I think that's enough for today."
 
 #: dialog0297.txt:1
 msgid "OTHER: Ty atakujesz, książę."
-msgstr ""
+msgstr "OTHER: Your turn to attack, prince."
 
 #: dialog0298.txt:1
 msgid "OTHER: Broń się, książę."
-msgstr ""
+msgstr "OTHER: Defend yourself, prince."
 
 #: dialog0299.txt:1
 msgid "OTHER: Dobra nasza, teraz ja atakuję!"
-msgstr ""
+msgstr "OTHER: We are good, I'm attacking now!"
 
 #: dialog0300.txt:1
 msgid "OTHER: Ha, i tak się obronię!"
-msgstr ""
+msgstr "OTHER: Ha, I will defend myself anyway!"
 
 #: dialog0301.txt:1
 msgid "OTHER: Złocisz dla ciebie, książę..."
-msgstr ""
+msgstr "OTHER: Some gold for you, prince..."
 
 #: dialog0302.txt:1
 msgid "OTHER: Poproszę o złocisza, książę..."
-msgstr ""
+msgstr "OTHER: Please, give me some gold, prince..."
 
 #: dialog0303.txt:1
 msgid "OTHER: Nie masz złociszy?"
-msgstr ""
+msgstr "OTHER: Got no gold?"
 
 #: dialog0303.txt:2
 msgid "OTHER: Ech, książę..."
-msgstr ""
+msgstr "OTHER: Ugh, prince..."
 
 #: dialog0303.txt:3
 msgid "OTHER: Ale przynajmniej miałem chwilę radości."

@@ -163,14 +163,6 @@ whitespace [\t ]
 (?i:set)		{ count(); return tSET; }
 (?i:starts)		{ count(); return tSTARTS; }
 (?i:tell)		{ count(); return tTELL; }
-(?i:the[ \t]+last[\t ]+of[\t ]+)	{
-		count();
-
-		yylval.e[0] = g_lingo->_theEntities["last"]->entity;
-		yylval.e[1] = 0;	// No field
-
-		return THEENTITYWITHID;
-	}
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();
 
@@ -186,7 +178,7 @@ whitespace [\t ]
 
 		return FBLTINONEARG;
 	}
-(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ]in)	{
+(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of))	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
