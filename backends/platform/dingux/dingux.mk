@@ -59,7 +59,7 @@ ifdef DYNAMIC_MODULES
 	$(MKDIR) $(gcw0_bundle)/plugins
 	$(CP) $(PLUGINS) $(gcw0_bundle)/plugins/
 endif
-	$(CP) $(libloc)/../lib/libmad.so.0.2.1 $(gcw0_bundle)/libmad.so.0
+	$(CP) $(libloc)/../lib/libmad.so* $(gcw0_bundle)/
 	$(CP) $(EXECUTABLE) $(gcw0_bundle)/scummvm
 
 	$(CP) $(srcdir)/dists/gcw0/scummvm.png $(gcw0_bundle)/
