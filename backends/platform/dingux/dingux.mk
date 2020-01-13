@@ -2,6 +2,8 @@ DINGUX_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 
 bundle_name = dingux-dist/scummvm
 gcw0_bundle = gcw0-opk
+f=$(shell which $(STRIP))
+libloc = $(shell dirname $(f))
 
 all: $(DINGUX_EXE_STRIPPED)
 
@@ -32,6 +34,7 @@ ifdef DYNAMIC_MODULES
 		$(CP) $(PLUGINS) $(bundle_name)/plugins
 		$(STRIP) $(bundle_name)/plugins/*
 endif
+
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.gpe $(bundle_name)/
 	$(CP) $(srcdir)/backends/platform/dingux/README.DINGUX $(bundle_name)/
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.png $(bundle_name)/
@@ -56,6 +59,7 @@ ifdef DYNAMIC_MODULES
 	$(MKDIR) $(gcw0_bundle)/plugins
 	$(CP) $(PLUGINS) $(gcw0_bundle)/plugins/
 endif
+	$(CP) $(libloc)/../lib/libmad.so.0.2.1 $(gcw0_bundle)/libmad.so.0
 	$(CP) $(EXECUTABLE) $(gcw0_bundle)/scummvm
 
 	$(CP) $(srcdir)/dists/gcw0/scummvm.png $(gcw0_bundle)/
