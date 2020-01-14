@@ -27,7 +27,7 @@ Download newest [scummvm-rg350.opk release](https://github.com/craigsc/scummvm-r
 - Y: '.' - skips current dialog line on several games
 - Start: 'F5' - Scummvm pause menu
 - Select: 'Esc' - skips cutscenes on many games
-- L-trigger: 'Shift' - i'm not a game that uses it lol
+- L-trigger: 'Shift' - i'm not aware of a game that uses it lol
 - R-trigger: show/hide virtual keyboard
 
 ## Notes on audio
