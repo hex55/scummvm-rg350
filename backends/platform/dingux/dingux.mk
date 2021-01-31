@@ -2,6 +2,7 @@ DINGUX_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 
 bundle_name = dingux-dist/scummvm
 gcw0_bundle = gcw0-opk
+miyoo_compile = /opt/miyoo/usr/bin/arm-linux-strip
 f=$(shell which $(STRIP))
 libloc = $(shell dirname $(f))
 
@@ -37,6 +38,30 @@ endif
 
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.gpe $(bundle_name)/
 	$(CP) $(srcdir)/backends/platform/dingux/README.DINGUX $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/dingux/scummvm.png $(bundle_name)/
+
+miyoo-dist: all
+	$(MKDIR) $(bundle_name)
+	$(MKDIR) $(bundle_name)/saves
+	$(miyoo_compile) $(EXECUTABLE) -o $(bundle_name)/scummvm.elf	
+	$(CP) $(DIST_FILES_THEMES) $(bundle_name)/
+ifdef DIST_FILES_ENGINEDATA
+	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+endif
+ifdef DIST_FILES_NETWORKING
+	$(CP) $(DIST_FILES_NETWORKING) $(bundle_name)/
+endif
+ifdef DIST_FILES_VKEYBD
+	$(CP) $(DIST_FILES_VKEYBD) $(bundle_name)/
+endif
+	$(CP) $(DIST_FILES_DOCS) $(bundle_name)/
+ifdef DYNAMIC_MODULES
+		$(MKDIR) $(bundle_name)/plugins
+		$(CP) $(PLUGINS) $(bundle_name)/plugins
+		$(miyoo_compile) $(bundle_name)/plugins/*
+endif
+
+	$(CP) $(srcdir)/backends/platform/dingux/README.MIYOO $(bundle_name)/
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.png $(bundle_name)/
 
 # Special target for generationg GCW-Zero OPK bundle
