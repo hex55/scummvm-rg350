@@ -978,6 +978,7 @@ Special configuration feature:
                                            androidsdl for Android with SDL backend
                                            caanoo for Caanoo
                                            dingux for Dingux
+                                           miyoo for Miyoo
                                            raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
@@ -3131,23 +3132,30 @@ if test -n "$_host"; then
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
 			append_var DEFINES "-DDINGUX -DGCW0"
+			append_var DEFINES "-DDISABLE_DOSBOX_OPL" 
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
-			#append_var CXXFLAGS "-mips32"
+			append_var CXXFLAGS "-msoft-float"
 			_backend="dingux"
-			_alsa=no
 			_mt32emu=no
-			_seq_midi=no
-			_timidity=no
+			_nuked_opl=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no
+			# Disable cloud and SDL_Net due to outdated toolchain
+			_cloud=no
+			_sdlnet=no
+			_libcurl=no
+			_vkeybd=yes			
+			_build_hq_scalers=no
 			_mad=yes
 			_build_scalers=yes
-			_optimization_level=-O3
-			_vkeybd=yes
-			_keymapper=yes
-			_vorbis=no
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no				
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
 			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
-
 		raspberrypi)
 			# This is needed because the official cross compiler doesn't have multiarch enabled
 			# but Raspbian does.
